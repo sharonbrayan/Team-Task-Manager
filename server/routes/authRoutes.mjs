@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 
 // Controllers will be added tomorrow
-import { signup, login, logout, getMe } from "../controllers/authController.mjs";
+import { signup, login, logout, getMe } from "../controllers/authcontroller.mjs";
 
 // Routes
 router.post("/signup", signup);
