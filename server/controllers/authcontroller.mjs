@@ -5,7 +5,7 @@ import 'dotenv/config'
 // helper: create token
 // --------------------
 const createToken = (payload) => {
-    return jwt.sign(payload, process.env.JWT_SECRET, {
+    return jwt.sign(payload, "secret", {
         expiresIn: "1d",
     });
 };
@@ -101,7 +101,7 @@ export const getMe = async (req, res, next) => {
             return res.status(401).json({ message: "Not authenticated" });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, "secret");
         const user = await User.findById(decoded.id).select("-password");
 
         if (!user) {

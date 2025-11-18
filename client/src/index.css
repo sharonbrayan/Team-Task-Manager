@@ -1,0 +1,16 @@
+:root{
+  --accent: #4f46e5; /* purple-blue accent */
+  --accent-2: #0d6efd; /* bootstrap primary fallback */
+}
+
+/* small adjustments */
+body {
+  background: #f8fafc;
+  color: #111827;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* card accent */
+.app-accent {
+  border-left: 4px solid var(--accent);
+}
