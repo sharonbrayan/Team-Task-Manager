@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import TeamView from "./pages/TeamView.jsx";
 import Navbar from "./components/Navbar.jsx";
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
+import LandingPage from "./pages/Landingpage.jsx";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -20,6 +21,7 @@ export default function App() {
       <Navbar />
       <div className="container my-4">
         <Routes>
+          <Route path="/" element={<LandingPage/>}/>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route

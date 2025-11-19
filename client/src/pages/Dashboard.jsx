@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import api from "../api/axiosconfig.js";
 import { Link } from "react-router-dom";
+import api from "../api/axiosConfig";
 
 export default function Dashboard() {
   const [teams, setTeams] = useState([]);

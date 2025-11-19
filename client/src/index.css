@@ -14,3 +14,9 @@ body {
 .app-accent {
   border-left: 4px solid var(--accent);
 }
+/* improve card visuals */
+.task-card .card-body { padding: 0.9rem; }
+.task-card .card-title { font-size: 1rem; margin-bottom: 0.25rem; }
+.task-card .card-text { color: #444; margin-bottom: 0.6rem; }
+.form-select-sm { min-width: 120px; }
+.text-truncate { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

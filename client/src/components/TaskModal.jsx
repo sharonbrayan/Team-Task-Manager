@@ -1,46 +1,67 @@
 // src/components/TaskModal.jsx
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import api from "../api/axiosConfig.js";
 
-export default function TaskModal({ teamId, onCreated }) {
-  // Create task and handle UI actions *after* ensuring the API succeeded.
+export default function TaskModal({ teamId, onCreated, editingTask, onUpdated }) {
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) return;
+    if (editingTask) {
+      form.title.value = editingTask.title || "";
+      form.description.value = editingTask.description || "";
+      form.dueDate.value = editingTask.dueDate ? editingTask.dueDate.slice(0, 10) : "";
+      form.priority.value = editingTask.priority || "medium";
+    } else {
+      form.reset();
+    }
+  }, [editingTask]);
+
+  const hideModalSafely = () => {
+    try {
+      const modalEl = document.getElementById("taskModal");
+      if (modalEl && window.bootstrap) window.bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+    } catch (err) {
+      console.error("modal hide failed", err);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const form = e.target;
-    const title = form.title.value.trim();
-    const description = form.description.value.trim();
-    const dueDate = form.dueDate.value || null;
-    const priority = form.priority.value || "medium";
+    const form = formRef.current;
+    const payload = {
+      title: form.title.value.trim(),
+      description: form.description.value.trim(),
+      dueDate: form.dueDate.value || null,
+      priority: form.priority.value || "medium",
+      teamId,
+    };
 
     try {
-      const res = await api.post("/tasks", { title, description, dueDate, priority, teamId });
-
-      // ensure the server returned success
-      if (res.status !== 201 && res.status !== 200) {
-        throw new Error(res.data?.message || "Unexpected response from server");
+      let res;
+      if (editingTask && editingTask._id) {
+        res = await api.patch(`/tasks/${editingTask._id}`, payload);
+      } else {
+        res = await api.post("/tasks", payload);
       }
 
-      // safely call onCreated (if provided) and hide modal without letting errors bubble to outer catch
+      if (!(res.status === 201 || res.status === 200)) {
+        throw new Error(res.data?.message || "Unexpected response");
+      }
+
+      // callbacks (don't allow them to bubble errors)
       try {
-        if (typeof onCreated === "function") await onCreated();
-      } catch (innerErr) {
-        console.error("onCreated callback failed:", innerErr);
+        if (editingTask && typeof onUpdated === "function") await onUpdated(res.data);
+        if (!editingTask && typeof onCreated === "function") await onCreated(res.data);
+      } catch (cbErr) {
+        console.error("callback error:", cbErr);
       }
 
-      // hide modal safely (only if the element exists and bootstrap is available)
-      try {
-        const modalEl = document.getElementById("taskModal");
-        if (modalEl && window.bootstrap && typeof window.bootstrap.Modal === "function") {
-          const modal = window.bootstrap.Modal.getOrCreateInstance(modalEl);
-          modal.hide();
-        }
-      } catch (hideErr) {
-        console.error("Failed to hide modal:", hideErr);
-      }
+      hideModalSafely();
     } catch (err) {
-      // show a helpful message (server message if available)
-      console.error("Create task error:", err);
-      alert(err.response?.data?.message || err.message || "Failed to create task");
+      console.error("Task save error:", err);
+      alert(err.response?.data?.message || err.message || "Failed to save task");
     }
   };
 
@@ -48,24 +69,28 @@ export default function TaskModal({ teamId, onCreated }) {
     <div className="modal fade" id="taskModal" tabIndex="-1" aria-hidden="true">
       <div className="modal-dialog">
         <div className="modal-content">
-          <form onSubmit={handleSubmit}>
+          <form ref={formRef} onSubmit={handleSubmit}>
             <div className="modal-header">
-              <h5 className="modal-title">Create Task</h5>
+              <h5 className="modal-title">{editingTask ? "Edit Task" : "Create Task"}</h5>
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
             </div>
+
             <div className="modal-body">
               <div className="mb-3">
                 <label className="form-label">Title</label>
                 <input name="title" className="form-control" required />
               </div>
+
               <div className="mb-3">
                 <label className="form-label">Description</label>
                 <textarea name="description" className="form-control" />
               </div>
+
               <div className="mb-3">
                 <label className="form-label">Due date</label>
                 <input name="dueDate" type="date" className="form-control" />
               </div>
+
               <div className="mb-3">
                 <label className="form-label">Priority</label>
                 <select name="priority" className="form-select" defaultValue="medium">
@@ -75,12 +100,13 @@ export default function TaskModal({ teamId, onCreated }) {
                 </select>
               </div>
             </div>
+
             <div className="modal-footer">
               <button className="btn btn-secondary" type="button" data-bs-dismiss="modal">
                 Cancel
               </button>
               <button className="btn btn-primary" type="submit">
-                Create
+                {editingTask ? "Save changes" : "Create"}
               </button>
             </div>
           </form>
