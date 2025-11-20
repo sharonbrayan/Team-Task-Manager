@@ -1,8 +1,8 @@
 // src/pages/TeamView.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import api from "../api/axiosConfig.js";
 import TaskModal from "../components/TaskModal.jsx";
+import api from "../api/axiosconfig.js";
 
 export default function TeamView() {
   const { teamId } = useParams();

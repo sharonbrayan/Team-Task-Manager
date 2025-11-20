@@ -1,6 +1,6 @@
 // src/components/TaskModal.jsx
 import React, { useEffect, useRef } from "react";
-import api from "../api/axiosConfig.js";
+import api from "../api/axiosconfig";
 
 export default function TaskModal({ teamId, onCreated, editingTask, onUpdated }) {
   const formRef = useRef(null);

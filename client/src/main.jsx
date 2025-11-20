@@ -2,7 +2,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-
 import App from "./App.jsx";           // your top-level component
 import "./index.css";                 // your app-level css (you'll create)
 import "bootstrap/dist/css/bootstrap.min.css";    // bootstrap css

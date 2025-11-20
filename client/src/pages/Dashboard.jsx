@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../api/axiosConfig";
+import api from "../api/axiosconfig";
+import { Modal } from "bootstrap";
 
 export default function Dashboard() {
   const [teams, setTeams] = useState([]);
@@ -50,17 +51,14 @@ export default function Dashboard() {
                 const description = form.description.value;
                 try {
                   await api.post("/teams", { name, description });
-                  // simple refresh
                   const res = await api.get("/teams");
                   setTeams(res.data);
-                  // close modal programmatically
-                  const modalEl = document.getElementById("createTeamModal");
-                  const modal = window.bootstrap.Modal.getOrCreateInstance(modalEl);
-                  modal.hide();
+                  // ✅ NO manual modal hide here
                 } catch (err) {
                   alert(err.response?.data?.message || "Failed to create team");
                 }
               }}
+
             >
               <div className="modal-header">
                 <h5 className="modal-title">Create team</h5>
@@ -80,7 +78,7 @@ export default function Dashboard() {
                 <button className="btn btn-secondary" type="button" data-bs-dismiss="modal">
                   Cancel
                 </button>
-                <button className="btn btn-primary" type="submit">
+                <button className="btn btn-primary" type="submit" data-bs-dismiss="modal">
                   Create
                 </button>
               </div>

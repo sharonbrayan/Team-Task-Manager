@@ -21,7 +21,7 @@ export default function Navbar() {
     <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
       <div className="container">
         <Link className="navbar-brand fw-bold" to="/">
-          TeamTask
+          Taktus
         </Link>
 
         <button
