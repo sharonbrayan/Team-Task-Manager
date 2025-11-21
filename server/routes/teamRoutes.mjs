@@ -8,6 +8,7 @@ import {
   getMyTeams,
   inviteMember,
   getTeamDetails,
+  deleteTeam,
 } from "../controllers/teamcontroller.mjs";
 
 // Create a team
@@ -21,6 +22,8 @@ router.post("/:teamId/invite", protect, inviteMember);
 
 // Get team details + members
 router.get("/:teamId", protect, getTeamDetails);
+
+router.delete("/:teamId", protect, deleteTeam);
 
 export default router;
 

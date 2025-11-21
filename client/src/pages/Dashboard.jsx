@@ -1,17 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axiosconfig";
 import { Modal } from "bootstrap";
+import { useAuth } from "../context/AuthContext";
 
 export default function Dashboard() {
   const [teams, setTeams] = useState([]);
-
+const { user } = useAuth();
   useEffect(() => {
     api
       .get("/teams")
       .then((res) => setTeams(res.data))
       .catch(() => setTeams([]));
   }, []);
+  const handleDeleteTeam = async (teamId) => {
+    if (!window.confirm("Are you sure you want to delete this team?")) return;
+
+    try {
+      await api.delete(`/teams/${teamId}`);
+      // refresh teams after delete
+      const res = await api.get("/teams");
+      setTeams(res.data);
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to delete team");
+    }
+  };
 
   return (
     <div>
@@ -25,18 +39,39 @@ export default function Dashboard() {
       <div className="row">
         {teams.length === 0 && <div className="col-12">You are not in any teams yet.</div>}
         {teams.map((t) => (
-          <div className="col-md-4" key={t._id}>
-            <div className="card mb-3">
-              <div className="card-body">
-                <h5 className="card-title">{t.name}</h5>
-                <p className="card-text">{t.description}</p>
-                <Link to={`/teams/${t._id}`} className="btn btn-sm btn-outline-primary">
-                  Open
-                </Link>
-              </div>
-            </div>
-          </div>
-        ))}
+  <div className="col-md-4" key={t._id}>
+    <div className="card mb-3">
+      <div className="card-body">
+        <h5 className="card-title d-flex justify-content-between align-items-center">
+          <span>{t.name}</span>
+
+          {/* Delete button only if current user is admin in this team */}
+          {user &&
+            t.members &&
+            t.members.some(
+              (m) =>
+                (m.user === user.id || m.user?._id === user.id) &&
+                m.role === "admin"
+            ) && (
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-danger"
+                onClick={() => handleDeleteTeam(t._id)}
+                title="Delete team"
+              >
+                Delete
+              </button>
+            )}
+        </h5>
+
+        <p className="card-text">{t.description}</p>
+        <Link to={`/teams/${t._id}`} className="btn btn-sm btn-outline-primary">
+          Open
+        </Link>
+      </div>
+    </div>
+  </div>
+))}
       </div>
 
       {/* Create Team Modal (basic) */}

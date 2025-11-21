@@ -1,6 +1,6 @@
 import Team from "../models/teammodel.mjs";
 import User from "../models/usermodel.mjs";
-
+import Task from "../models/taskmodel.mjs"; 
 // -------------------------------------
 // CREATE TEAM
 // POST /api/teams
@@ -101,4 +101,40 @@ export const getTeamDetails = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
+};
+
+
+export const deleteTeam = async (req, res, next) => {
+  try {
+    const { teamId } = req.params;
+    const userId = req.user._id;
+
+    const team = await Team.findById(teamId);
+    if (!team) return res.status(404).json({ message: "Team not found" });
+
+    // ONLY admin of that team can delete
+    const memberEntry = team.members.find(
+      (m) => m.user.toString() === userId.toString()
+    );
+
+    if (!memberEntry || memberEntry.role !== "admin") {
+      return res.status(403).json({ message: "Only admin can delete team" });
+    }
+
+    // Remove team reference from all users
+    await User.updateMany(
+      { teams: teamId },
+      { $pull: { teams: teamId } }
+    );
+
+    // Delete all tasks in the team
+    await Task.deleteMany({ team: teamId });
+
+    // Delete team
+    await Team.findByIdAndDelete(teamId);
+
+    res.json({ message: "Team deleted" });
+  } catch (err) {
+    next(err);
+  }
 };

@@ -82,13 +82,16 @@ export default function TeamView() {
               .filter((t) => t.status === status)
               .map((t) => (
                 <div className="card mb-2" key={t._id}>
-                  <div className="card-body">
+                  <div className="card-body d-flex flex-column">
                     <h6 className="card-title">{t.title}</h6>
                     <p className="card-text small">{t.description}</p>
 
                     {/* Assigned UI: show dropdown to assign */}
-                    <div className="mb-2 d-flex align-items-center">
-                      <small className="me-2">{t.assignedTo ? t.assignedTo.name : "Unassigned"}</small>
+                    <div className="mb-2 d-flex align-items-center flex-wrap">
+                      <small className="me-2">
+                        {t.assignedTo ? "Assigned To" : "Unassigned"}
+                      </small>
+
                       <select
                         className="form-select form-select-sm w-auto me-2"
                         onChange={(e) => {
@@ -105,6 +108,7 @@ export default function TeamView() {
                           </option>
                         ))}
                       </select>
+
                       {/* quick button to clear assignment */}
                       <button
                         className="btn btn-sm btn-outline-secondary"
@@ -115,29 +119,77 @@ export default function TeamView() {
                       </button>
                     </div>
 
+                    {/* Due Date + Priority Row */}
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <small className="text-muted">
+                        {t.dueDate
+                          ? "Due: " + new Date(t.dueDate).toLocaleDateString()
+                          : "No due date"}
+                      </small>
+
+                      <span
+                        className={
+                          "badge " +
+                          (t.priority === "high"
+                            ? "bg-danger"
+                            : t.priority === "medium"
+                              ? "bg-warning text-dark"
+                              : "bg-success")
+                        }
+                      >
+                        {t.priority}
+                      </span>
+                    </div>
                     <div className="d-flex justify-content-between align-items-center">
-                      <small>{t.dueDate ? new Date(t.dueDate).toLocaleDateString() : ""}</small>
+                      <small>
+                        {t.dueDate ? new Date(t.dueDate).toLocaleDateString() : ""}
+                      </small>
 
                       <div>
                         <button
                           className="btn btn-sm btn-outline-primary me-2"
                           onClick={() => moveForward(t)}
                           disabled={t.status === "done"}
-                          title={t.status === "done" ? "Task is complete" : "Move to next stage"}
+                          title={
+                            t.status === "done"
+                              ? "Task is complete"
+                              : "Move to next stage"
+                          }
                         >
                           Move
                         </button>
 
                         {/* open details / comments could be another modal or route */}
-                        <button className="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#taskModal">
+                        {/* <button
+                          className="btn btn-sm btn-outline-info"
+                          data-bs-toggle="modal"
+                          data-bs-target="#taskModal"
+                        >
                           Edit
+                        </button> */}
+                        <button
+                          className="btn btn-sm btn-outline-danger ms-2"
+                          onClick={async () => {
+                            if (!confirm("Delete this task?")) return;
+
+                            try {
+                              await api.delete(`/tasks/${t._id}`);
+                              load(); // refresh tasks
+                            } catch (err) {
+                              alert(err.response?.data?.message || "Failed to delete task");
+                            }
+                          }}
+                        >
+                          Delete
                         </button>
+
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
           </div>
+
         ))}
       </div>
 
