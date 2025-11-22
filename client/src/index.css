@@ -20,3 +20,6 @@ body {
 .task-card .card-text { color: #444; margin-bottom: 0.6rem; }
 .form-select-sm { min-width: 120px; }
 .text-truncate { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+
+/* Navbar Styles */

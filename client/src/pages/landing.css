@@ -1,64 +1,168 @@
-/* landing.css - styles for the landing page component */
+/* landing.css - Modern SaaS Theme */
 
 :root {
-  --primary: #4f46e5; /* Indigo */
-  --light-bg: #f8fafc;
-  --gradient-light: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+    /* Color Palette */
+    --primary-color: #4f46e5;       /* Indigo 600 */
+    --primary-dark: #4338ca;        /* Indigo 700 */
+    --secondary-color: #8b5cf6;     /* Violet 500 */
+    --dark-text: #1e293b;           /* Slate 800 */
+    --muted-text: #64748b;          /* Slate 500 */
+    --light-bg: #f8fafc;            /* Slate 50 */
+    --white: #ffffff;
+
+    /* Gradients */
+    --brand-gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    --dark-gradient: linear-gradient(to right, #1e293b, #334155);
 }
 
-/* General */
+/* General Typography & Reset */
 body {
-  background-color: var(--light-bg);
-  color: #1a5bc2;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--muted-text);
+    background-color: var(--white);
+    -webkit-font-smoothing: antialiased;
 }
 
-/* Hero */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--dark-text);
+    letter-spacing: -0.025em; /* Tighter spacing for headings */
+}
+
+/* Utility Classes */
+.text-gradient-brand {
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.fw-bolder { font-weight: 800 !important; }
+.rounded-4 { border-radius: 1rem !important; }
+.rounded-5 { border-radius: 1.5rem !important; }
+
+/* Subtle hover effect for cards and links */
+.hover-lift-sm {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift-sm:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px -10px rgba(0,0,0,0.1);
+}
+
+/* ----- HERO SECTION ----- */
 .landing-hero {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
+    position: relative;
+    padding-top: 8rem; /* Accounting for fixed navbar */
+    padding-bottom: 6rem;
+    overflow: hidden;
+    /* Subtle background pattern */
+    background-color: var(--white);
+    background-image: radial-gradient(at 80% 20%, hsla(258,60%,94%,1) 0px, transparent 50%),
+                      radial-gradient(at 20% 50%, hsla(222,60%,94%,1) 0px, transparent 50%);
 }
 
-.hero-card {
-  background: #ffffff;
-  border-radius: 1rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.hero-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #eef2ff; /* Very light indigo */
+    color: var(--primary-color);
+    border-radius: 50rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.1); /* Subtle border */
 }
 
-.hero-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+/* The container for the main dashboard image */
+.hero-image-container {
+    position: relative;
+    z-index: 2;
+    border-radius: 1rem;
+    /* Define the shadow glow based on brand colors */
+    box-shadow: 0 20px 40px -20px rgba(79, 70, 229, 0.25),
+                0 0 0 1px rgba(0,0,0,0.05);
 }
 
-/* Features */
-#features .border {
-  border-color: #e2e8f0 !important;
+/* ----- BUTTONS ----- */
+.btn-primary-brand {
+    background: var(--primary-color);
+    border: none;
+    padding: 0.75rem 1.75rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
 }
 
-#features h5 {
-  font-weight: 600;
+.btn-primary-brand:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
 }
 
-#features .display-6 {
-  font-size: 2.25rem;
+.btn-outline-brand {
+    background: transparent;
+    border: 2px solid #e2e8f0;
+    color: var(--dark-text);
+    padding: 0.75rem 1.75rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+}
+.btn-outline-brand:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background-color: #f8fafc;
 }
 
-/* CTA */
-.bg-gradient-light {
-  background: var(--gradient-light);
+/* ----- FEATURES SECTION ----- */
+.feature-card {
+    padding: 2.5rem;
+    height: 100%;
+    background: var(--white);
+    border: 1px solid #f1f5f9; /* Very subtle border */
+    border-radius: 1.25rem;
 }
 
-/* Testimonials */
-.blockquote {
-  font-size: 1.05rem;
-  line-height: 1.6;
+.feature-icon-box {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    /* Light indigo background for icons */
+    background-color: #eef2ff;
+    color: var(--primary-color);
 }
 
-.blockquote-footer {
-  font-size: 0.875rem;
-  color: #6b7280;
+/* ----- CTA BANNER SECTION ----- */
+.cta-section {
+    background: var(--dark-gradient);
+    position: relative;
+    overflow: hidden;
 }
 
-/* Footer */
-footer {
-  font-size: 0.95rem;
+/* Adds faint abstract lines over the dark background */
+.cta-overlay-pattern {
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+    background-image: linear-gradient(45deg, #ffffff 10%, transparent 10%, transparent 50%, #ffffff 50%, #ffffff 60%, transparent 60%, transparent 100%);
+    background-size: 20px 20px;
+}
+
+/* ----- FOOTER ----- */
+.footer-brand {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--dark-text);
+}
+
+.footer-link {
+    color: var(--muted-text);
+    transition: color 0.2s;
+}
+.footer-link:hover {
+    color: var(--primary-color);
 }
