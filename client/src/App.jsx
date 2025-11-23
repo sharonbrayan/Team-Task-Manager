@@ -7,6 +7,7 @@ import TeamView from "./pages/TeamView.jsx";
 import Navbar from "./components/Navbar.jsx";
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import LandingPage from "./pages/Landingpage.jsx";
+import Footer from "./components/Footer.jsx";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </div>
+      <Footer/>
     </AuthProvider>
   );
 }
