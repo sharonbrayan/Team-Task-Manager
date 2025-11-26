@@ -5,11 +5,11 @@ import 'dotenv/config'
 // helper: create token
 // --------------------
 const createToken = (payload) => {
-    return jwt.sign(payload, "secret", {
+    return jwt.sign(payload, process.env.JWT_SECRET, {
         expiresIn: "1d",
     });
 };
-
+const isProduction = process.env.NODE_ENV === "production";
 // --------------------
 // POST /signup
 // --------------------
@@ -26,12 +26,14 @@ export const signup = async (req, res, next) => {
 
         const token = createToken({ id: user._id });
 
-        res.cookie("token", token, {
+       
+res.cookie('token', token, {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-        });
-
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: "/"
+        })
         return res.status(201).json({
             message: "User created successfully",
             user: {
@@ -64,11 +66,13 @@ export const login = async (req, res, next) => {
 
         const token = createToken({ id: user._id });
 
-        res.cookie("token", token, {
+        res.cookie('token', token, {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-        });
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: "/"
+        })
 
         return res.json({
             message: "Logged in successfully",
@@ -96,12 +100,17 @@ export const logout = (req, res) => {
 // --------------------
 export const getMe = async (req, res, next) => {
     try {
-        const token = req.cookies?.token;
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
+            path: "/"
+        });
         if (!token) {
             return res.status(401).json({ message: "Not authenticated" });
         }
 
-        const decoded = jwt.verify(token, "secret");
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const user = await User.findById(decoded.id).select("-password");
 
         if (!user) {

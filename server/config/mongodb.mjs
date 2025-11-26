@@ -5,7 +5,7 @@ export const connectDb = async () => {
         mongoose.connection.on('connected',()=>{
             console.log("connected to the database");
         })
-        await mongoose.connect("mongodb+srv://dj338832_db_user:ZOQ3clx12RLM1vGz@cluster0.fzpqnnu.mongodb.net/team-task-manager?appName=Cluster0");
+        await mongoose.connect(process.env.MONGO_URI);
     } catch (error) {
         console.log(error);
     } 
