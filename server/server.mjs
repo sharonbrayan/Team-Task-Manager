@@ -47,21 +47,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/tasks", taskRoutes);
 
-// =========================================================================
-// CRITICAL FIX: PRODUCTION STATIC FILE SERVING AND CATCH-ALL ROUTE (SPA FALLBACK)
-// This block must come AFTER all your API routes
-// =========================================================================
-if (process.env.NODE_ENV === 'production') {
-  // 1. Serve static assets (CSS, JS, images) from the client's built folder
-  // Adjust 'client/dist' if your build folder has a different name (e.g., 'client/build')
-  app.use(express.static(path.join(__dirname, 'client/dist')));
-
-  // 2. The Catch-All Route: For any non-API GET request, send index.html
-  // This allows React Router to handle the URL (e.g., /home, /dashboard)
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
-  });
-}
 
 
 // Global error handler (simple version)
