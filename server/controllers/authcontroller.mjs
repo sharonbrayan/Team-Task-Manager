@@ -100,7 +100,7 @@ export const logout = (req, res) => {
 // --------------------
 export const getMe = async (req, res, next) => {
     try {
-        res.clearCookie('token', token,{
+        res.clearCookie('token', {
             httpOnly: true,
             secure: isProduction,
             sameSite: isProduction ? "none" : "lax",
